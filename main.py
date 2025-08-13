@@ -28,7 +28,7 @@ def stop_all_thrusters(thruster_list):
 
 # Mapeo de movimientos comunes a thrusters y PWM
 MOVEMENTS = {
-    "forward": {"thrusters": [1,2,7,8], "pwm": 1600},
+    "forward": {"thrusters": [1,3,7,8], "pwm": 1600},
     "backward": {"thrusters": [1,2,7,8], "pwm": 1400},
     "up": {"thrusters": [3,4,5,6], "pwm": 1600},
     "down": {"thrusters": [3,4,5,6], "pwm": 1400},
