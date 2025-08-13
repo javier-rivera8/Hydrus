@@ -8,19 +8,19 @@ Servo thrusters[NUM_THRUSTERS];
 
 // Pin assignments for thrusters (adjust to your wiring)
 const int THRUSTER_PINS[NUM_THRUSTERS] = {
-  3,   // Thruster 1
-  4,   // Thruster 2  
-  5,   // Thruster 3
-  6,   // Thruster 4
-  7,   // Thruster 5
-  8,   // Thruster 6
-  9,   // Thruster 7
-  10   // Thruster 8
+  2,   // Thruster 1
+  3,   // Thruster 2  
+  4,   // Thruster 3
+  5,   // Thruster 4
+  6,   // Thruster 5
+  7,   // Thruster 6
+  8,   // Thruster 7
+  9   // Thruster 8
 };
 
 // PWM limits for safety
 const int PWM_MIN = 1100;
-const int PWM_MAX = 1900;
+const int PWM_MAX = 1700;
 const int PWM_NEUTRAL = 1500;
 
 // Serial communication variables
