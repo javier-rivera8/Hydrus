@@ -1,6 +1,6 @@
 #!/bin/bash
 BOARD="arduino:avr:mega"
-PORT=""
-SKETCH=$1
+PORT="/dev/ttyACM0"
+SKETCH="/home/enrique/Documents/Hydrus/Hydrus/Hydrus.ino"
 
-arduino-cli compile --upload -p $PORT --fqbn $BOARD $SKETCH
+arduino-cli compile --upload -p $PORT --fqbn $BOARD $SKETCH -v
