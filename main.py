@@ -33,7 +33,7 @@ MOVEMENTS = {
     "backward": {"thrusters": [2,3], "pwm": 1400},
     "up": {"thrusters": [5,6], "pwm": 1600},
     "down": {"thrusters": [5,6], "pwm": 1400},
-    "stop": {"thrusters": [2,3,4,5,6,7,8.9], "pwm": 1500},
+    "stop": {"thrusters": [2,3,4,5,6,7,8], "pwm": 1500},
 }
 
 def move(movement, duration):
