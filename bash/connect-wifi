@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Script interactivo para conectarse a Wi-Fi
+
+# Pedir el nombre de la red
+read -p "Ingrese el nombre de la red Wi-Fi (SSID): " SSID
+
+# Pedir la contraseña (sin mostrarla en pantalla)
+read -s -p "Ingrese la contraseña: " PASSWORD
+echo
+
+# Conectar usando nmcli
+echo "Conectando a '$SSID'..."
+nmcli dev wifi connect "$SSID" password "$PASSWORD"
+
+if [ $? -eq 0 ]; then
+    echo "Conectado correctamente a '$SSID'."
+else
+    echo "Error: No se pudo conectar a '$SSID'. Verifica el nombre y la contraseña."
+fi
+
