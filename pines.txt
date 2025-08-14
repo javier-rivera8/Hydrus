@@ -1,0 +1,7 @@
+Motor 1 → Pin 9
+Motor 2 → Pin 3
+Motor 3 → Pin 4
+Motor 4 → Pin 5
+Motor 5 → Pin 6
+Motor 7 → Pin 8
+Motor 8 → Pin 2
