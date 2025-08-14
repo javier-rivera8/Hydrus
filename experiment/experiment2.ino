@@ -1,7 +1,9 @@
 #include <Servo.h>
 
+// Declaración de motores
 Servo motor1, motor2, motor3, motor4, motor5, motor7, motor8;
 
+// Pines de cada motor
 int pinMotor1 = 9;
 int pinMotor2 = 3;
 int pinMotor3 = 4;
@@ -9,19 +11,6 @@ int pinMotor4 = 5;
 int pinMotor5 = 6;
 int pinMotor7 = 8;
 int pinMotor8 = 2;
-
-Servo* getMotor(int motorNum) {
-  switch (motorNum) {
-    case 1: return &motor1;
-    case 2: return &motor2;
-    case 3: return &motor3;
-    case 4: return &motor4;
-    case 5: return &motor5;
-    case 7: return &motor7;
-    case 8: return &motor8;
-    default: return nullptr;
-  }
-}
 
 void setup() {
   motor1.attach(pinMotor1);
@@ -43,7 +32,7 @@ void setup() {
   motor7.writeMicroseconds(1500);
   motor8.writeMicroseconds(1500);
 
-  Serial.println("Todos los thrusters inicializados");
+  Serial.println("Todos los motores inicializados en stop");
   delay(2000);
 }
 
@@ -52,48 +41,81 @@ void loop() {
     String command = Serial.readStringUntil('\n');
     command.trim();
 
-    if (command.startsWith("forward")) {
-      // Eliminamos "forward " y dividimos el resto
-      command = command.substring(7);
-      int spaceIndex = 0;
-      int motorNum, duration;
-      
-      while (command.length() > 0) {
-        spaceIndex = command.indexOf(' ');
-        if (spaceIndex == -1) break;
+    int firstSpace = command.indexOf(' ');
+    int secondSpace = command.indexOf(' ', firstSpace + 1);
 
-        motorNum = command.substring(0, spaceIndex).toInt();
-        command = command.substring(spaceIndex + 1);
+    if (command.startsWith("forward") && firstSpace > 0 && secondSpace > firstSpace) {
+      int motorNum = command.substring(firstSpace + 1, secondSpace).toInt();
+      int duration = command.substring(secondSpace + 1).toInt();
 
-        spaceIndex = command.indexOf(' ');
-        if (spaceIndex == -1) {
-          duration = command.toInt();
-          command = "";
-        } else {
-          duration = command.substring(0, spaceIndex).toInt();
-          command = command.substring(spaceIndex + 1);
-        }
+      if (duration > 0) {
+        Serial.println("Motor " + String(motorNum) + " forward por " + String(duration) + " segundos");
 
-        Servo* selectedMotor = getMotor(motorNum);
-        if (selectedMotor != nullptr && duration > 0) {
-          Serial.println("Motor " + String(motorNum) + " forward por " + String(duration) + " segundos");
-          selectedMotor->writeMicroseconds(1600);
-          delay(duration * 1000);
-          selectedMotor->writeMicroseconds(1500);
-          Serial.println("Motor " + String(motorNum) + " detenido");
-        }
+        if (motorNum == 1) motor1.writeMicroseconds(1600);
+        else if (motorNum == 2) motor2.writeMicroseconds(1600);
+        else if (motorNum == 3) motor3.writeMicroseconds(1600);
+        else if (motorNum == 4) motor4.writeMicroseconds(1600);
+        else if (motorNum == 5) motor5.writeMicroseconds(1600);
+        else if (motorNum == 7) motor7.writeMicroseconds(1600);
+        else if (motorNum == 8) motor8.writeMicroseconds(1600);
+
+        delay(duration * 1000);
+
+        if (motorNum == 1) motor1.writeMicroseconds(1500);
+        else if (motorNum == 2) motor2.writeMicroseconds(1500);
+        else if (motorNum == 3) motor3.writeMicroseconds(1500);
+        else if (motorNum == 4) motor4.writeMicroseconds(1500);
+        else if (motorNum == 5) motor5.writeMicroseconds(1500);
+        else if (motorNum == 7) motor7.writeMicroseconds(1500);
+        else if (motorNum == 8) motor8.writeMicroseconds(1500);
+
+        Serial.println("Motor " + String(motorNum) + " detenido");
+      }
+    }
+
+    // Comando: backward <motor> <duración>
+    else if (command.startsWith("backward") && firstSpace > 0 && secondSpace > firstSpace) {
+      int motorNum = command.substring(firstSpace + 1, secondSpace).toInt();
+      int duration = command.substring(secondSpace + 1).toInt();
+
+      if (duration > 0) {
+        Serial.println("Motor " + String(motorNum) + " backward por " + String(duration) + " segundos");
+
+        if (motorNum == 1) motor1.writeMicroseconds(1400);
+        else if (motorNum == 2) motor2.writeMicroseconds(1400);
+        else if (motorNum == 3) motor3.writeMicroseconds(1400);
+        else if (motorNum == 4) motor4.writeMicroseconds(1400);
+        else if (motorNum == 5) motor5.writeMicroseconds(1400);
+        else if (motorNum == 7) motor7.writeMicroseconds(1400);
+        else if (motorNum == 8) motor8.writeMicroseconds(1400);
+
+        delay(duration * 1000);
+
+        if (motorNum == 1) motor1.writeMicroseconds(1500);
+        else if (motorNum == 2) motor2.writeMicroseconds(1500);
+        else if (motorNum == 3) motor3.writeMicroseconds(1500);
+        else if (motorNum == 4) motor4.writeMicroseconds(1500);
+        else if (motorNum == 5) motor5.writeMicroseconds(1500);
+        else if (motorNum == 7) motor7.writeMicroseconds(1500);
+        else if (motorNum == 8) motor8.writeMicroseconds(1500);
+
+        Serial.println("Motor " + String(motorNum) + " detenido");
       }
     }
 
     // Comando: stop <motor>
     else if (command.startsWith("stop")) {
       int motorNum = command.substring(5).toInt();
-      Servo* selectedMotor = getMotor(motorNum);
-      if (selectedMotor != nullptr) {
-        selectedMotor->writeMicroseconds(1500);
-        Serial.println("Motor " + String(motorNum) + " detenido manualmente");
-      }
+
+      if (motorNum == 1) motor1.writeMicroseconds(1500);
+      else if (motorNum == 2) motor2.writeMicroseconds(1500);
+      else if (motorNum == 3) motor3.writeMicroseconds(1500);
+      else if (motorNum == 4) motor4.writeMicroseconds(1500);
+      else if (motorNum == 5) motor5.writeMicroseconds(1500);
+      else if (motorNum == 7) motor7.writeMicroseconds(1500);
+      else if (motorNum == 8) motor8.writeMicroseconds(1500);
+
+      Serial.println("Motor " + String(motorNum) + " detenido manualmente");
     }
   }
 }
-

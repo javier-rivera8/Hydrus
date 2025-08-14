@@ -5,3 +5,7 @@ Motor 4 → Pin 5
 Motor 5 → Pin 6
 Motor 7 → Pin 8
 Motor 8 → Pin 2
+
+
+
+connect serial monitor screen /dev/ttyACM0 9600
