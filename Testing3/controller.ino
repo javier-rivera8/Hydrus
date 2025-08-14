@@ -1,5 +1,6 @@
 #include <Servo.h>
 
+// Objetos Servo para cada motor
 Servo motor1;
 Servo motor2;
 Servo motor3;
@@ -9,10 +10,12 @@ Servo motor6;
 Servo motor7;
 Servo motor8;
 
+// Límites
 const int MIN_US = 1000;
 const int MAX_US = 2000;
 const int NEUTRAL_US = 1500;
 
+// Pines
 const int pin1 = 2;
 const int pin2 = 3;
 const int pin3 = 4;
@@ -22,114 +25,90 @@ const int pin6 = 7;
 const int pin7 = 8;
 const int pin8 = 9;
 
-void setMotorUS(int motor, int us) {
-  us = constrain(us, MIN_US, MAX_US);
+// Función para mover un motor específico
+void setMotor(int motor, int us) {
+  if (us < MIN_US || us > MAX_US) {
+    Serial.println("ERR us fuera de rango");
+    return;
+  }
 
-  switch (motor) {
-    case 1: motor1.writeMicroseconds(us); break;
-    case 2: motor2.writeMicroseconds(us); break;
-    case 3: motor3.writeMicroseconds(us); break;
-    case 4: motor4.writeMicroseconds(us); break;
-    case 5: motor5.writeMicroseconds(us); break;
-    case 6: motor6.writeMicroseconds(us); break;
-    case 7: motor7.writeMicroseconds(us); break;
-    case 8: motor8.writeMicroseconds(us); break;
-    default:
-      Serial.println("ERR motor fuera de rango");
-      return;
+  if (motor == 1) motor1.writeMicroseconds(us);
+  else if (motor == 2) motor2.writeMicroseconds(us);
+  else if (motor == 3) motor3.writeMicroseconds(us);
+  else if (motor == 4) motor4.writeMicroseconds(us);
+  else if (motor == 5) motor5.writeMicroseconds(us);
+  else if (motor == 6) motor6.writeMicroseconds(us);
+  else if (motor == 7) motor7.writeMicroseconds(us);
+  else if (motor == 8) motor8.writeMicroseconds(us);
+  else {
+    Serial.println("ERR motor fuera de rango");
+    return;
   }
 
   Serial.print("Motor ");
   Serial.print(motor);
-  Serial.print(" set to ");
+  Serial.print(" -> ");
   Serial.println(us);
 }
 
+// Procesar comando recibido
 void procesarLinea(const String &input) {
   String line = input;
   line.trim();
   if (line.length() == 0) return;
 
-  char buf[160];
-  if (line.length() >= (int)sizeof(buf)) {
-    Serial.println("ERR linea demasiado larga");
-    return;
-  }
+  char buf[80];
   line.toCharArray(buf, sizeof(buf));
 
   char *tok = strtok(buf, " \t");
   if (!tok) return;
 
-  // --------- Nuevo comando "forward" ----------
+  // -------- Comando forward --------
   if (strcmp(tok, "forward") == 0) {
-    // Leer primer motor
-    tok = strtok(NULL, " \t");
-    if (!tok) { Serial.println("ERR falta motor 1"); return; }
-    int motor1_id = atoi(tok);
+    int m1 = atoi(strtok(NULL, " \t"));
+    int p1 = atoi(strtok(NULL, " \t"));
+    int m2 = atoi(strtok(NULL, " \t"));
+    int p2 = atoi(strtok(NULL, " \t"));
+    int tiempo = atoi(strtok(NULL, " \t"));
 
-    tok = strtok(NULL, " \t");
-    if (!tok) { Serial.println("ERR falta PWM motor 1"); return; }
-    int pwm1 = atoi(tok);
-
-    // Leer segundo motor
-    tok = strtok(NULL, " \t");
-    if (!tok) { Serial.println("ERR falta motor 2"); return; }
-    int motor2_id = atoi(tok);
-
-    tok = strtok(NULL, " \t");
-    if (!tok) { Serial.println("ERR falta PWM motor 2"); return; }
-    int pwm2 = atoi(tok);
-
-    // Leer tiempo
-    tok = strtok(NULL, " \t");
-    if (!tok) { Serial.println("ERR falta tiempo"); return; }
-    int tiempo = atoi(tok);
-
-    // Validaciones
-    if (motor1_id < 1 || motor1_id > 8 || motor2_id < 1 || motor2_id > 8) {
+    if (m1 < 1 || m1 > 8 || m2 < 1 || m2 > 8) {
       Serial.println("ERR motor fuera de rango");
       return;
     }
-    if (pwm1 < MIN_US || pwm1 > MAX_US || pwm2 < MIN_US || pwm2 > MAX_US) {
+    if (p1 < MIN_US || p1 > MAX_US || p2 < MIN_US || p2 > MAX_US) {
       Serial.println("ERR us fuera de rango");
       return;
     }
     if (tiempo <= 0) {
-      Serial.println("ERR tiempo inválido");
+      Serial.println("ERR tiempo invalido");
       return;
     }
 
-    // Ejecutar
-    setMotorUS(motor1_id, pwm1);
-    setMotorUS(motor2_id, pwm2);
+    setMotor(m1, p1);
+    setMotor(m2, p2);
     delay(tiempo);
-    setMotorUS(motor1_id, NEUTRAL_US);
-    setMotorUS(motor2_id, NEUTRAL_US);
+    setMotor(m1, NEUTRAL_US);
+    setMotor(m2, NEUTRAL_US);
 
     Serial.println("OK");
     return;
   }
 
-  // --------- Comando original "motor" ----------
+  // -------- Comando motor --------
   if (strcmp(tok, "motor") == 0) {
-    tok = strtok(NULL, " \t");
-    if (!tok) { Serial.println("ERR falta ID de motor"); return; }
-    int motor = atoi(tok);
+    int m = atoi(strtok(NULL, " \t"));
+    int p = atoi(strtok(NULL, " \t"));
 
-    tok = strtok(NULL, " \t");
-    if (!tok) { Serial.println("ERR falta valor PWM"); return; }
-    int us = atoi(tok);
-
-    if (motor < 1 || motor > 8) {
+    if (m < 1 || m > 8) {
       Serial.println("ERR motor fuera de rango");
       return;
     }
-    if (us < MIN_US || us > MAX_US) {
+    if (p < MIN_US || p > MAX_US) {
       Serial.println("ERR us fuera de rango");
       return;
     }
 
-    setMotorUS(motor, us);
+    setMotor(m, p);
     Serial.println("OK");
     return;
   }
@@ -150,9 +129,14 @@ void setup() {
   motor7.attach(pin7);
   motor8.attach(pin8);
 
-  for (int i = 1; i <= 8; i++) {
-    setMotorUS(i, NEUTRAL_US);
-  }
+  setMotor(1, NEUTRAL_US);
+  setMotor(2, NEUTRAL_US);
+  setMotor(3, NEUTRAL_US);
+  setMotor(4, NEUTRAL_US);
+  setMotor(5, NEUTRAL_US);
+  setMotor(6, NEUTRAL_US);
+  setMotor(7, NEUTRAL_US);
+  setMotor(8, NEUTRAL_US);
 
   Serial.println("READY");
 }
@@ -160,8 +144,6 @@ void setup() {
 void loop() {
   if (Serial.available()) {
     String line = Serial.readStringUntil('\n');
-    if (line.length() > 0) {
-      procesarLinea(line);
-    }
+    procesarLinea(line);
   }
 }
