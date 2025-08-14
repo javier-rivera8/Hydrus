@@ -1,21 +1,49 @@
 #include <Servo.h>
 
-#define NUM_THRUSTERS 8
+Servo motor1, motor2, motor3, motor4, motor5, motor7, motor8;
 
-Servo thrusters[NUM_THRUSTERS];
-int thrusterPins[NUM_THRUSTERS] = {2, 3, 4, 5, 6, 7, 8, 9};
-int stopValue = 1500;  
+int pinMotor1 = 9;
+int pinMotor2 = 3;
+int pinMotor3 = 4;
+int pinMotor4 = 5;
+int pinMotor5 = 6;
+int pinMotor7 = 8;
+int pinMotor8 = 2;
+
+Servo* getMotor(int motorNum) {
+  switch (motorNum) {
+    case 1: return &motor1;
+    case 2: return &motor2;
+    case 3: return &motor3;
+    case 4: return &motor4;
+    case 5: return &motor5;
+    case 7: return &motor7;
+    case 8: return &motor8;
+    default: return nullptr;
+  }
+}
 
 void setup() {
+  motor1.attach(pinMotor1);
+  motor2.attach(pinMotor2);
+  motor3.attach(pinMotor3);
+  motor4.attach(pinMotor4);
+  motor5.attach(pinMotor5);
+  motor7.attach(pinMotor7);
+  motor8.attach(pinMotor8);
+
   Serial.begin(9600);
 
-  // Inicializar todos los thrusters
-  for (int i = 0; i < NUM_THRUSTERS; i++) {
-    thrusters[i].attach(thrusterPins[i]);
-    thrusters[i].writeMicroseconds(stopValue);
-  }
+  // Inicializamos todos en stop
+  motor1.writeMicroseconds(1500);
+  motor2.writeMicroseconds(1500);
+  motor3.writeMicroseconds(1500);
+  motor4.writeMicroseconds(1500);
+  motor5.writeMicroseconds(1500);
+  motor7.writeMicroseconds(1500);
+  motor8.writeMicroseconds(1500);
 
-  Serial.println("Todos los thrusters inicializados en stop");
+  Serial.println("Todos los thrusters inicializados");
   delay(2000);
 }
 
@@ -25,70 +53,47 @@ void loop() {
     command.trim();
 
     if (command.startsWith("forward")) {
-      // forward <thruster/all> <valor> <segundos>
-      int firstSpace = command.indexOf(' ');
-      int secondSpace = command.indexOf(' ', firstSpace + 1);
-      int thirdSpace = command.indexOf(' ', secondSpace + 1);
+      // Eliminamos "forward " y dividimos el resto
+      command = command.substring(7);
+      int spaceIndex = 0;
+      int motorNum, duration;
+      
+      while (command.length() > 0) {
+        spaceIndex = command.indexOf(' ');
+        if (spaceIndex == -1) break;
 
-      if (firstSpace > 0 && secondSpace > 0 && thirdSpace > 0) {
-        String target = command.substring(firstSpace + 1, secondSpace);
-        int value = command.substring(secondSpace + 1, thirdSpace).toInt();
-        int duration = command.substring(thirdSpace + 1).toInt();
+        motorNum = command.substring(0, spaceIndex).toInt();
+        command = command.substring(spaceIndex + 1);
 
-        if (target == "all") {
-          for (int i = 0; i < NUM_THRUSTERS; i++) {
-            thrusters[i].writeMicroseconds(value);
-          }
+        spaceIndex = command.indexOf(' ');
+        if (spaceIndex == -1) {
+          duration = command.toInt();
+          command = "";
         } else {
-          int thrusterNum = target.toInt() - 1; 
-          if (thrusterNum >= 0 && thrusterNum < NUM_THRUSTERS) {
-            thrusters[thrusterNum].writeMicroseconds(value);
-          } else {
-            Serial.println("Thruster inválido");
-            return;
-          }
+          duration = command.substring(0, spaceIndex).toInt();
+          command = command.substring(spaceIndex + 1);
         }
 
-        Serial.println("Moviendo " + target + " a " + String(value) + " por " + String(duration) + " segundos");
-        delay(duration * 1000);
-
-        // Parar después
-        if (target == "all") {
-          for (int i = 0; i < NUM_THRUSTERS; i++) {
-            thrusters[i].writeMicroseconds(stopValue);
-          }
-        } else {
-          thrusters[target.toInt() - 1].writeMicroseconds(stopValue);
+        Servo* selectedMotor = getMotor(motorNum);
+        if (selectedMotor != nullptr && duration > 0) {
+          Serial.println("Motor " + String(motorNum) + " forward por " + String(duration) + " segundos");
+          selectedMotor->writeMicroseconds(1600);
+          delay(duration * 1000);
+          selectedMotor->writeMicroseconds(1500);
+          Serial.println("Motor " + String(motorNum) + " detenido");
         }
-
-        Serial.println("Movimiento completado, thrusters detenidos");
       }
     }
+
+    // Comando: stop <motor>
     else if (command.startsWith("stop")) {
-      // stop <thruster/all>
-      int spaceIndex = command.indexOf(' ');
-      if (spaceIndex > 0) {
-        String target = command.substring(spaceIndex + 1);
-        if (target == "all") {
-          for (int i = 0; i < NUM_THRUSTERS; i++) {
-            thrusters[i].writeMicroseconds(stopValue);
-          }
-        } else {
-          int thrusterNum = target.toInt() - 1;
-          if (thrusterNum >= 0 && thrusterNum < NUM_THRUSTERS) {
-            thrusters[thrusterNum].writeMicroseconds(stopValue);
-          } else {
-            Serial.println("Thruster inválido");
-            return;
-          }
-        }
-        Serial.println("Thruster(s) detenidos");
+      int motorNum = command.substring(5).toInt();
+      Servo* selectedMotor = getMotor(motorNum);
+      if (selectedMotor != nullptr) {
+        selectedMotor->writeMicroseconds(1500);
+        Serial.println("Motor " + String(motorNum) + " detenido manualmente");
       }
     }
   }
 }
-
-
-//comando pa mandar comands
-//arduino-cli monitor -p /dev/ttyACM0 -c baud=9600
 
