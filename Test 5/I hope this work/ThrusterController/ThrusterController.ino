@@ -66,17 +66,14 @@ void right() {
 
 void up() {
   motor5.writeMicroseconds(1600);
-  motor6.writeMicroseconds(1600);
-
 }
 
 void down() {
   motor5.writeMicroseconds(1400);
-  motor6.writeMicroseconds(1400);
 }
 
 void loop() {
-  if (Serial.available() > 0) {
+ /* if (Serial.available() > 0) {
     char command = Serial.read();
 
     switch (command) {
@@ -91,5 +88,13 @@ void loop() {
 
     delay(2000);
     stopAll();
-  }
+  }*/
+  forward();
+  delay(3000);
+  stopAll();
+  delay(3000);
+  back();
+  delay(3000);
+  stopAll();
+  delay(5000);
 }

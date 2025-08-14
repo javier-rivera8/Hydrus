@@ -25,6 +25,7 @@ void loop() {
 
     switch (command) {
       case 'F': 
+      
         thruster.writeMicroseconds(1600);
         thruster2.writeMicroseconds(1600);
         break;
