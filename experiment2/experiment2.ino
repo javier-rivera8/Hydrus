@@ -48,38 +48,63 @@ void loop() {
     String command = Serial.readStringUntil('\n');
     command.trim();
 
-    int firstSpace = command.indexOf(' ');
-    int secondSpace = command.indexOf(' ', firstSpace + 1);
-    int thirdSpace = command.indexOf(' ', secondSpace + 1);
+    // Separar todos los "tokens" del comando
+    int lastSpace = command.lastIndexOf(' ');
+    if (lastSpace < 0) return;
 
-    if ((command.startsWith("forward") || command.startsWith("backward")) &&
-        firstSpace > 0 && secondSpace > firstSpace && thirdSpace > secondSpace) {
+    int duration = command.substring(lastSpace + 1).toInt(); 
+    String motorsPWM = command.substring(0, lastSpace);      
 
-      int motorA = command.substring(firstSpace + 1, secondSpace).toInt();
-      int motorB = command.substring(secondSpace + 1, thirdSpace).toInt();
-      int duration = command.substring(thirdSpace + 1).toInt();
+    Serial.println("Comando recibido, duración: " + String(duration));
 
-      int señal = command.startsWith("forward") ? 1600 : 1400;
+    // Procesar pares motor-pwm
+    int start = 0;
+    while (start < motorsPWM.length()) {
+      int spaceIdx = motorsPWM.indexOf(' ', start);
+      String motorStr, pwmStr;
+      if (spaceIdx >= 0) {
+        motorStr = motorsPWM.substring(start, spaceIdx);
+        start = spaceIdx + 1;
+      } else {
+        motorStr = motorsPWM.substring(start);
+        start = motorsPWM.length();
+      }
 
-      Serial.println("Moviendo motores " + String(motorA) + " y " + String(motorB) +
-                     (señal==1600 ? " forward " : " backward ") + String(duration) + " segundos");
+      spaceIdx = motorsPWM.indexOf(' ', start);
+      if (spaceIdx >= 0) {
+        pwmStr = motorsPWM.substring(start, spaceIdx);
+        start = spaceIdx + 1;
+      } else {
+        pwmStr = motorsPWM.substring(start);
+        start = motorsPWM.length();
+      }
 
-      moverMotor(motorA, señal);
-      moverMotor(motorB, señal);
+      int motorNum = motorStr.toInt();
+      int pwm = pwmStr.toInt();
 
-      delay(duration * 1000);
-
-      moverMotor(motorA, 1500);
-      moverMotor(motorB, 1500);
-
-      Serial.println("Motores detenidos");
+      moverMotor(motorNum, pwm);
+      Serial.println("Motor " + String(motorNum) + " -> PWM " + String(pwm));
     }
 
-    // Comando stop <motor>
-    else if (command.startsWith("stop")) {
-      int motorNum = command.substring(5).toInt();
+    delay(duration * 1000);
+
+    // Detener todos los motores enviados
+    start = 0;
+    while (start < motorsPWM.length()) {
+      int spaceIdx = motorsPWM.indexOf(' ', start);
+      String motorStr;
+      if (spaceIdx >= 0) {
+        motorStr = motorsPWM.substring(start, spaceIdx);
+        start = spaceIdx + 1;
+      } else {
+        motorStr = motorsPWM.substring(start);
+        start = motorsPWM.length();
+      }
+
+      int motorNum = motorStr.toInt();
       moverMotor(motorNum, 1500);
-      Serial.println("Motor " + String(motorNum) + " detenido manualmente");
     }
+
+    Serial.println("Motores detenidos");
   }
 }
