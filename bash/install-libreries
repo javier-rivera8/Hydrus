@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Script para instalar pyserial y Arduino CLI
+
+# Actualizar paquetes e instalar dependencias
+echo "Actualizando paquetes..."
+sudo apt update && sudo apt install -y curl unzip python3-pip
+
+# Instalar librería serial para Python
+echo "Instalando pyserial..."
+pip3 install pyserial --user
+
+# Instalar Arduino CLI
+echo "Descargando Arduino CLI..."
+ARDUINO_CLI_VERSION=$(curl -s https://api.github.com/repos/arduino/arduino-cli/releases/latest | grep tag_name | cut -d '"' -f 4)
+curl -fsSL https://downloads.arduino.cc/arduino-cli/arduino-cli_${ARDUINO_CLI_VERSION}_Linux_64bit.tar.gz -o arduino-cli.tar.gz
+
+echo "Extrayendo Arduino CLI..."
+tar -xzf arduino-cli.tar.gz
+sudo mv arduino-cli /usr/local/bin/
+rm arduino-cli.tar.gz
+
+# Verificar instalación
+echo "Verificando instalaciones..."
+python3 -m serial.tools.list_ports
+arduino-cli version
+
+echo "¡Instalación completa!"
