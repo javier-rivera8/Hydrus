@@ -2,8 +2,8 @@
 
 Servo thruster;
 Servo thruster2;
-int pinThruster = 4;
-int pinThruster2 = 9;
+int pinThruster = 3;
+int pinThruster2 = 4;
 
 void setup() {
   thruster.attach(pinThruster);
