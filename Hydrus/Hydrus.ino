@@ -29,7 +29,7 @@ boolean stringComplete = false;
 
 void setup() {
   // Initialize serial communication
-  Serial.begin(115200);
+  Serial.begin(9600);
   
   // Attach all thrusters to their pins
   for (int i = 0; i < NUM_THRUSTERS; i++) {

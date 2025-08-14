@@ -5,7 +5,7 @@ import sys
 
 # Configuración del puerto serie (ajusta según tu Arduino)
 ARDUINO_PORT = "/dev/ttyACM0"
-BAUD_RATE = 115200
+BAUD_RATE = 9600
 
 # Inicializar conexión serie
 try:
