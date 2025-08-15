@@ -20,7 +20,7 @@ void setup() {
   thruster.writeMicroseconds(1600);
   thruster2.writeMicroseconds(1600);
   Serial.println("Thruster a velocidad máxima (1600 µs)");
-  delay(1000);  // Mantener 3 segundos
+  delay(3000);  // Mantener 3 segundos
   thruster.writeMicroseconds(1500);
   thruster2.writeMicroseconds(1500);
 }
