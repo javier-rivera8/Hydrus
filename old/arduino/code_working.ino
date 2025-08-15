@@ -2,8 +2,8 @@
 
 Servo thruster;
 Servo thruster2;
-int pinThruster =4;
-int pinThruster2 =9;
+int pinThruster =3;
+int pinThruster2 =4;
 
 void setup() {
   thruster.attach(pinThruster);
@@ -17,17 +17,21 @@ void setup() {
   delay(3000);  // Tiempo para que el ESC se estabilice
 
 
-  thruster.writeMicroseconds(1600);
-  thruster2.writeMicroseconds(1600);
-  Serial.println("Thruster a velocidad máxima (1600 µs)");
-  delay(3000);  // Mantener 3 segundos
-  thruster.writeMicroseconds(1500);
-  thruster2.writeMicroseconds(1500);
 }
 
 void loop() {
   // Encender al máximo
 
+
+  thruster.writeMicroseconds(1600);
+  delay(3000);  // Esperar 1 segundo para estabilizar
+  thruster.writeMicroseconds(1500);
+
+  thruster2.writeMicroseconds(1600);
+  delay(3000);  // Esperar 1 segundo para estabilizar
+
+  thruster.writeMicroseconds(1500);
+  thruster2.writeMicroseconds(1500);
   
   // Volver a stop
 }

@@ -4,6 +4,12 @@ arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:mega Testing6.in
 
 arduino-cli monitor -p /dev/ttyACM0 -c baudrate=9600
 
+arduino-cli core install arduino:avr
+
+arduino-cli lib install "Servo"
+
+
+
 # En el monitor serie, envía:
 7,1600
 
