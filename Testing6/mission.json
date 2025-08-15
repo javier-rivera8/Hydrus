@@ -1,0 +1,9 @@
+[
+    "delay(5s)",
+    "front(motor 7 1600 motor 8 1600, 3s)",
+    "delay(2s)",
+    "up(motor 4 1600 motor 6 1600, 5s)",
+    "left(motor 1 1600 motor 3 1400, 4s)",
+    "delay(1s)",
+    "back(motor 7 1400 motor 8 1400, 2s)"
+]
